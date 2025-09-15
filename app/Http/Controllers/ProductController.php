@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category_Model;
-use App\Models\Product_Model;
+use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
-class Product_Controller extends Controller
+class ProductController extends Controller
 {
     public function ShowProductPage(){
-        $categories = Category_Model::all();
-        $products = Product_Model::all();
-        return view("products", compact("products","categories"));
+        $categories = Category::all();
+        $products = Product::all();
+        return view("product", compact("products","categories"));
     }
 
     public function AddProduct(Request $req){
-        $p = new Product_Model();
+        $p = new Product();
         $p->name = $req->productname;
         $p->desc = $req->productdesc;
         $p->price = $req->productprice;
@@ -48,7 +48,7 @@ class Product_Controller extends Controller
 
     // ✅ New Update Method
     public function UpdateProduct(Request $req, $id){
-        $p = Product_Model::find($id);
+        $p = Product::find($id);
         $p->name = $req->productname;
         $p->desc = $req->productdesc;
         $p->price = $req->productprice;
