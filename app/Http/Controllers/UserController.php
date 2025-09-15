@@ -10,10 +10,10 @@ class User_Controller extends Controller
     public function Redirect(){
         $user = Auth::user()->user_type;
         if($user == 0){
-            return view('home_page');
+            return view('index');
         }
         else{
-            return view('admin_page');
+            return view('dashboard');
         }
     }
 }
