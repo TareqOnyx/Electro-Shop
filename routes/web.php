@@ -21,11 +21,11 @@ Route::middleware([
 Route::get('/products', [ProductController::class, 'ShowProductPage'])->name('products');
 
 // Add a new product
-Route::post('/products/add', [Product_Controller::class, 'AddProduct'])->name('add-product');
+Route::post('/products/add', [ProductController::class, 'AddProduct'])->name('add-product');
 
 // Update a product (usually via form with PUT method)
-Route::post('/products/update/{id}', [Product_Controller::class, 'UpdateProduct'])->name('update-product');
+Route::post('/products/update/{id}', [ProductController::class, 'UpdateProduct'])->name('update-product');
 
 // Delete a product
-Route::get('/products/delete/{id}', [Product_Controller::class, 'DeleteProduct'])->name('delete-product');
+Route::get('/products/delete/{id}', [ProductController::class, 'DeleteProduct'])->name('delete-product');
 
