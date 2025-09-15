@@ -21,25 +21,53 @@ class Product_Controller extends Controller
         $p->desc = $req->productdesc;
         $p->price = $req->productprice;
         $p->cat_id = $req->cat_id;
-        $image = $req-> imgpro;
+
+        $image = $req->imgpro;
         if ($image) {
             $image = $req->file('imgpro');
-            $imageName = time() . '.' . $req->file('imgpro')->getClientOriginalExtension();
-            $req->imgpro->move('images', $imageName);
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images'), $imageName);
             $p->image = 'images/' . $imageName;
-            $p->save();
-            return redirect()->back()->with("message", "product added successfully");
         }
-        else{
-             return redirect()->back()->with("message1", "Error");
-        }
-       
+
+        $p->save();
+        return redirect()->back()->with("message", "Product added successfully");
     }
 
     public function DeleteProduct($id){
         $pr = Product_Model::find($id);
+
+        // Delete image file if exists
+        if ($pr->image && file_exists(public_path($pr->image))) {
+            unlink(public_path($pr->image));
+        }
+
         $pr->delete();
         return Redirect()->back();
+    }
 
+    // ✅ New Update Method
+    public function UpdateProduct(Request $req, $id){
+        $p = Product_Model::find($id);
+        $p->name = $req->productname;
+        $p->desc = $req->productdesc;
+        $p->price = $req->productprice;
+        $p->cat_id = $req->cat_id;
+
+        $image = $req->imgpro;
+        if ($image) {
+            // Delete old image if exists
+            if ($p->image && file_exists(public_path($p->image))) {
+                unlink(public_path($p->image));
+            }
+
+            $image = $req->file('imgpro');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images'), $imageName);
+            $p->image = 'images/' . $imageName;
+        }
+
+        $p->save();
+        return redirect()->back()->with("message", "Product updated successfully");
     }
 }
