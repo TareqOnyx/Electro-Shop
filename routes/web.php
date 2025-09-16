@@ -2,14 +2,20 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Product_Controller;
-
-Route::get('/', [UserController::class, 'Redirect']);
-
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index'); // public homepage
 });
+
+
+
+// Redirect after login (authenticated users only)
+//Route::get('/', [UserController::class, 'Redirect'])->middleware('auth');
+
+
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
