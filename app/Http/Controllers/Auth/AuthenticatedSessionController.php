@@ -19,7 +19,6 @@ class AuthenticatedSessionController extends Controller
         return view('auth.login');
     }
 
-<<<<<<< HEAD
     /**
      * Handle an incoming authentication request.
      */
@@ -32,7 +31,7 @@ class AuthenticatedSessionController extends Controller
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
-=======
+
 
 
     /**
