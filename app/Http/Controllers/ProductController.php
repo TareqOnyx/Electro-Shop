@@ -35,7 +35,7 @@ class ProductController extends Controller
     }
 
     public function DeleteProduct($id){
-        $pr = Product_Model::find($id);
+        $pr = Product::find($id);
 
         // Delete image file if exists
         if ($pr->image && file_exists(public_path($pr->image))) {
