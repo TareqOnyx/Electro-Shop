@@ -17,8 +17,7 @@ return new class extends Migration
             $table->string('desc');           // بدل 'desc'
             $table->decimal('price', 10, 2);         // لدعم الأسعار العشرية
             $table->string('image');
-            $table->integer('stock')->default(0);    // مخزون افتراضي 0
-            $table->foreignId('cat_id')->constrained()->onDelete('cascade');
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

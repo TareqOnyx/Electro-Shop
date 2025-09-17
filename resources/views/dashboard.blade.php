@@ -6,6 +6,7 @@
     </x-slot>
 
     <div class="p-6 text-gray-900 space-y-12">
+
         <!-- =======================
              Categories Table
              ======================= -->
@@ -63,40 +64,44 @@
         </div>
 
         <!-- =======================
-             <!-- Add Product Form -->
-<form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" class="mb-6 grid grid-cols-5 gap-2 items-end">
-    @csrf
-    <div>
-        <label>Name</label>
-        <input type="text" name="productname" class="border px-2 py-1 w-full" required>
-    </div>
-    <div>
-        <label>Description</label>
-        <input type="text" name="productdesc" class="border px-2 py-1 w-full">
-    </div>
-    <div>
-        <label>Price</label>
-        <input type="number" step="0.01" name="productprice" class="border px-2 py-1 w-full" required>
-    </div>
-    <div>
-        <label>Category</label>
-        <select name="cat_id" class="border px-2 py-1 w-full" required>
-            @foreach($cats as $cat)
-                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-            @endforeach
-        </select>
-    </div>
-    <div>
-        <label>Image</label>
-        <input type="file" name="imgpro" class="border px-2 py-1 w-full">
-    </div>
-    <div class="col-span-5">
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Add Product
-        </button>
-    </div>
-</form>
+             Products Table
+             ======================= -->
+        <div>
+            <h2 class="text-lg font-semibold mb-4">Products</h2>
 
+            <!-- Add Product Form -->
+            <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" class="mb-6 grid grid-cols-5 gap-2 items-end">
+                @csrf
+                <div>
+                    <label>Name</label>
+                    <input type="text" name="name" class="border px-2 py-1 w-full" required>
+                </div>
+                <div>
+                    <label>Description</label>
+                    <input type="text" name="desc" class="border px-2 py-1 w-full">
+                </div>
+                <div>
+                    <label>Price</label>
+                    <input type="number" step="0.01" name="price" class="border px-2 py-1 w-full" required>
+                </div>
+                <div>
+                    <label>Category</label>
+                    <select name="category_id" class="border px-2 py-1 w-full" required>
+                        @foreach($cats as $cat)
+                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label>Image</label>
+                    <input type="file" name="imgpro" class="border px-2 py-1 w-full">
+                </div>
+                <div class="col-span-5">
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        Add Product
+                    </button>
+                </div>
+            </form>
 
             <!-- Products Table -->
             <table class="table-auto w-full border">
@@ -128,9 +133,9 @@
                                 <input type="number" step="0.01" name="price" value="{{ $product->price }}" class="border px-2 py-1 w-full">
                             </td>
                             <td class="border px-4 py-2">
-                                <select name="cat_id" class="border px-2 py-1 w-full">
+                                <select name="category_id" class="border px-2 py-1 w-full">
                                     @foreach($cats as $cat)
-                                        <option value="{{ $cat->id }}" {{ $product->cat_id == $cat->id ? 'selected' : '' }}>
+                                        <option value="{{ $cat->id }}" {{ $product->category_id == $cat->id ? 'selected' : '' }}>
                                             {{ $cat->name }}
                                         </option>
                                     @endforeach
@@ -163,5 +168,6 @@
                 </tbody>
             </table>
         </div>
+
     </div>
 </x-app-layout>

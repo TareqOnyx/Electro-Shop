@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
-   protected $fillable = ['name','desc','price','image','stock','cat_id'];
+   protected $fillable = ['name','desc','price','image','stock','category_id'];
 
     public function category() :BelongsTo {
-        return $this->belongsTo(category::class);
+        return $this->belongsTo(Category::class);
     }
     public function review():HasMany {
-        return $this->hasMany(review::class);
+        return $this->hasMany(Review::class);
     }
 }
