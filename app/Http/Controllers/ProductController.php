@@ -41,7 +41,6 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product added successfully.');
     }
 
-<<<<<<< HEAD
     public function DeleteProduct($id){
         $pr = Product::find($id);
 
@@ -52,12 +51,10 @@ class ProductController extends Controller
 
         $pr->delete();
         return Redirect()->back();
-=======
     // GET /products/{id}
     public function show(Product $product)
     {
         return view('products.show', compact('product'));
->>>>>>> 9b9497d10bada0878d995b65772bc2a9adaaea05
     }
 
 

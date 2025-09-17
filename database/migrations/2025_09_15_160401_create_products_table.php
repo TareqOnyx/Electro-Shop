@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description');           // بدل 'desc'
+            $table->string('desc');           // بدل 'desc'
             $table->decimal('price', 10, 2);         // لدعم الأسعار العشرية
             $table->string('image');
             $table->integer('stock')->default(0);    // مخزون افتراضي 0
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->foreignId('cat_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
