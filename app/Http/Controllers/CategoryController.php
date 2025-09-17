@@ -3,46 +3,59 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Category_Model;
+use App\Models\Category;
 use Illuminate\Support\Facades\Redirect;
 
-class Category_Controller extends Controller
+class CategoryController extends Controller
 {
-    //Show
-    public function ShowCategoryPage(){
-        $cats = Category_Model::all();
-        return view("categories", compact('cats'));
+    // GET /categories
+    public function index()
+    {
+        $cats = Category::all();
+        return view("dashboard", compact('cats')); // now $cats is available in dashboard
     }
 
+    // POST /categories
+    public function store(Request $request)
+    {
+        $request->validate([
+            'catname' => 'required|string|max:255'
+        ]);
 
-    //Add
-    public function AddCategory(Request $req){
-        $cat = new Category_Model();
-        $cat->name = $req->catname;
+        Category::create([
+            'name' => $request->catname
+        ]);
+
+        return redirect()->route('categories.index');
+    }
+
+    // GET /categories/{id}/edit
+    public function edit($id)
+    {
+        $cat = Category::findOrFail($id);
+        return view('updatecat', compact('cat'));
+    }
+
+    // PUT /categories/{id}
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'catname' => 'required|string|max:255'
+        ]);
+
+        $cat = Category::findOrFail($id);
+        $cat->name = $request->catname;
         $cat->save();
-        return Redirect()->back();
+
+        return redirect()->route('categories.index');
     }
 
+    // DELETE /categories/{id}
+    public function destroy($id)
+    {
+        $cat = Category::findOrFail($id);
+        $cat->delete();
 
-//Update
-    public function UpdatePage($id){
-        $catupdate = Category_Model::find($id);
-        return view("updatecat", compact("catupdate"));
-    }
-
-    public function UpdateCat(Request $req, $id){
-        $catupdate = Category_Model::find($id);
-        $catupdate->name = $req->catname;
-
-        $catupdate->save();
-        return redirect()->back();
-    }
-
-    // Delete
-        public function DeleteCategory($id){
-        $cat = Category_Model::find($id);
-
-        $cat->delete(); 
-        return Redirect()->back();
+        return redirect()->route('categories.index');
     }
 }
