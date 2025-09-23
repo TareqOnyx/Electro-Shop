@@ -4,11 +4,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use App\Http\Middleware\IsAdmin;
 
 // Public homepage
 Route::get('/', function () {
     return view('index');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store'); // for submitting the order
 });
 
 // Dashboard + admin routes (protected for admins)
@@ -25,6 +31,8 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
     Route::put('/products/{id}', [DashboardController::class, 'updateProduct'])->name('products.update');
     Route::delete('/products/{id}', [DashboardController::class, 'deleteProduct'])->name('products.destroy');
 });
+
+
 
 // Profile routes (any authenticated user)
 Route::middleware('auth')->group(function () {
