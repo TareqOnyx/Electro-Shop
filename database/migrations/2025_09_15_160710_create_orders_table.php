@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->decimal('total', 10, 2);
             $table->string('status')->default('pending');
-            $table->foreignId('area')->constrained('areas')->onDelete('cascade');
+            $table->foreignId('area_id')->constrained('areas')->onDelete('cascade');
             $table->string('address');
             $table->timestamps();
         });

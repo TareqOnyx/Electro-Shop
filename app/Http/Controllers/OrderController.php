@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Cart;
+use App\Models\Area;
 
 class OrderController extends Controller
 {
@@ -20,49 +21,56 @@ class OrderController extends Controller
     }
 
     // Create a new order (from cart)
-    public function store(Request $request)
-    {
-        try {
-            // Get cart
-            $cartItems = Cart::with('product')
-                ->where('user_id', auth()->id())
-                ->get();
+public function store(Request $request)
+{
+    $request->validate([
+        'area_id' => 'required|exists:areas,id',
+        'address' => 'required|string|max:255',
+    ]);
 
-            if ($cartItems->isEmpty()) {
-                return redirect()->back()->with('error', 'Your cart is empty');
-            }
+    try {
+        // Get cart
+        $cartItems = Cart::with('product')
+            ->where('user_id', auth()->id())
+            ->get();
 
-            // Calculate total
-            $total = 0;
-            foreach ($cartItems as $item) {
-                $total += $item->product->price * $item->quantity;
-            }
-
-            // Create order
-            $order = Order::create([
-                'user_id' => auth()->id(),
-                'total'   => $total,
-                'status'  => 'pending',
-            ]);
-
-            // Create order items (no stock update)
-            foreach ($cartItems as $item) {
-                OrderItem::create([
-                    'order_id'   => $order->id,
-                    'product_id' => $item->product->id,
-                    'quantity'   => $item->quantity,
-                    'price'      => $item->product->price,
-                ]);
-            }
-
-            // Clear cart
-            Cart::where('user_id', auth()->id())->delete();
-
-            return redirect()->route('orders.index')->with('success', 'Order placed successfully');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to place order: ' . $e->getMessage());
+        if ($cartItems->isEmpty()) {
+            return redirect()->back()->with('error', 'Your cart is empty');
         }
+
+        // Calculate total
+        $total = 0;
+        foreach ($cartItems as $item) {
+            $total += $item->product->price * $item->quantity;
+        }
+
+        // Create order with area_id and address
+        $order = Order::create([
+            'user_id'  => auth()->id(),
+            'total'    => $total,
+            'status'   => 'pending',
+            'area_id'  => $request->area_id,
+            'address'  => $request->address,
+        ]);
+
+        // Create order items
+        foreach ($cartItems as $item) {
+            OrderItem::create([
+                'order_id'   => $order->id,
+                'product_id' => $item->product->id,
+                'quantity'   => $item->quantity,
+                'price'      => $item->product->price,
+            ]);
+        }
+
+        // Clear cart
+        Cart::where('user_id', auth()->id())->delete();
+
+        return redirect()->route('orders.index')->with('success', 'Order placed successfully');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Failed to place order: ' . $e->getMessage());
     }
+}
 
     // Update order status (user only)
     public function updateStatus(Request $request, $id)
@@ -89,16 +97,18 @@ class OrderController extends Controller
     }
 
     // Checkout page
-    public function checkout()
-    {
-        $cartItems = Cart::with('product')
-            ->where('user_id', auth()->id())
-            ->get();
+public function checkout()
+{
+    $cartItems = Cart::with('product')
+        ->where('user_id', auth()->id())
+        ->get();
 
-        $total = $cartItems->sum(function($item) {
-            return $item->product->price * $item->quantity;
-        });
+    $total = $cartItems->sum(function($item) {
+        return $item->product->price * $item->quantity;
+    });
 
-        return view('checkout', compact('cartItems', 'total'));
-    }
+    $areas = Area::all(); // <-- load areas here
+
+    return view('checkout', compact('cartItems', 'total', 'areas'));
+}
 }
