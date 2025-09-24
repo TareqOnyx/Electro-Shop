@@ -96,6 +96,26 @@ public function store(Request $request)
         }
     }
 
+    // Show all orders (admin)
+public function adminIndex()
+{
+    $orders = Order::with('items.product', 'user', 'area')->get();
+    return view('orders', compact('orders'));
+}
+
+// Update order status (admin)
+public function updateStatusAdmin(Request $request, Order $order)
+{
+    $request->validate([
+        'status' => 'required|string|in:pending,confirmed,delivered,canceled',
+    ]);
+
+    $order->update(['status' => $request->status]);
+
+    return redirect()->route('orders.index')->with('success', 'Order status updated.');
+}
+
+
     // Checkout page
 public function checkout()
 {

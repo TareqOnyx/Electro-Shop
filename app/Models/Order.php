@@ -36,6 +36,11 @@ class Order extends Model
         return $this->belongsTo(Delivery::class);
     }
 
+        public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
+
     // Optional: Auto calculate total from items
     public function getTotalAttribute()
     {

@@ -36,6 +36,9 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
     Route::put('/areas/{id}', [DashboardController::class, 'updateArea'])->name('areas.update');
     Route::delete('/areas/{id}', [DashboardController::class, 'deleteArea'])->name('areas.destroy');
 
+    Route::get('/orders', [OrderController::class, 'adminIndex'])->name('orders.index');
+    Route::put('/orders/{order}/status', [OrderController::class, 'updateStatusAdmin'])->name('orders.updateStatus');
+
 });
 
 
