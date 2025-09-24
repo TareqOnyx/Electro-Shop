@@ -30,7 +30,15 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
     Route::post('/products', [DashboardController::class, 'addProduct'])->name('products.store');
     Route::put('/products/{id}', [DashboardController::class, 'updateProduct'])->name('products.update');
     Route::delete('/products/{id}', [DashboardController::class, 'deleteProduct'])->name('products.destroy');
+
+    // Areas CRUD
+    Route::post('/areas', [DashboardController::class, 'addArea'])->name('areas.store');
+    Route::put('/areas/{id}', [DashboardController::class, 'updateArea'])->name('areas.update');
+    Route::delete('/areas/{id}', [DashboardController::class, 'deleteArea'])->name('areas.destroy');
+
 });
+
+
 
 
 

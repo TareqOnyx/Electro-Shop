@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Area;
 use Illuminate\Support\Facades\Redirect;
 
 class DashboardController extends Controller
@@ -13,8 +14,9 @@ class DashboardController extends Controller
     {
         $cats = Category::all();
         $products = Product::all();
+        $areas = Area::all();
 
-        return view('dashboard', compact('cats', 'products'));
+        return view('dashboard', compact('cats', 'products', 'areas'));
     }
 
     // --- Categories ---
@@ -114,4 +116,38 @@ class DashboardController extends Controller
 
         return Redirect()->back()->with('success', 'Product deleted.');
     }
+
+    // --- Areas ---
+public function addArea(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+    ]);
+
+    Area::create(['name' => $request->name]);
+
+    return Redirect()->back()->with('success', 'Area added.');
+}
+
+public function updateArea(Request $request, $id)
+{
+    $request->validate([
+        'name' => 'required|string|max:50',
+    ]);
+
+    $area = Area::findOrFail($id);
+    $area->name = $request->name;
+    $area->save();
+
+    return Redirect()->back()->with('success', 'Area updated.');
+}
+
+public function deleteArea($id)
+{
+    $area = Area::findOrFail($id);
+    $area->delete();
+
+    return Redirect()->back()->with('success', 'Area deleted.');
+}
+
 }

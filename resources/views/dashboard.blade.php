@@ -8,59 +8,116 @@
     <div class="p-6 text-gray-900 space-y-12">
 
         <!-- =======================
-             Categories Table
+             Categories + Areas
              ======================= -->
-        <div>
-            <h2 class="text-lg font-semibold mb-4">Categories</h2>
+        <div class="grid grid-cols-2 gap-8">
+            <!-- Categories -->
+            <div>
+                <h2 class="text-lg font-semibold mb-4">Categories</h2>
 
-            <!-- Add Category Form -->
-            <form action="{{ route('categories.store') }}" method="POST" class="mb-6 flex gap-2 items-end">
-                @csrf
-                <input type="text" name="catname" placeholder="New Category" class="border px-4 py-2 w-1/2" required>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    Add Category
-                </button>
-            </form>
+                <!-- Add Category Form -->
+                <form action="{{ route('categories.store') }}" method="POST" class="mb-6 flex gap-2 items-end">
+                    @csrf
+                    <input type="text" name="catname" placeholder="New Category" class="border px-4 py-2 w-1/2" required>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        Add Category
+                    </button>
+                </form>
 
-            <!-- Categories Table -->
-            <table class="table-auto w-full border">
-                <thead>
-                    <tr class="bg-gray-100">
-                        <th class="border px-4 py-2">ID</th>
-                        <th class="border px-4 py-2">Name</th>
-                        <th class="border px-4 py-2">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($cats as $cat)
-                        <tr>
-                            <td class="border px-4 py-2">{{ $cat->id }}</td>
-                            <td class="border px-4 py-2">{{ $cat->name }}</td>
-                            <td class="border px-4 py-2 flex gap-2">
-                                <!-- Update Category -->
-                                <form action="{{ route('categories.update', $cat->id) }}" method="POST" class="flex gap-1">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="text" name="catname" value="{{ $cat->name }}" class="border px-2 py-1">
-                                    <button type="submit" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
-                                        Update
-                                    </button>
-                                </form>
-
-                                <!-- Delete Category -->
-                                <form action="{{ route('categories.destroy', $cat->id) }}" method="POST"
-                                      onsubmit="return confirm('Delete this category?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
-                                        Delete
-                                    </button>
-                                </form>
-                            </td>
+                <!-- Categories Table -->
+                <table class="table-auto w-full border">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border px-4 py-2">ID</th>
+                            <th class="border px-4 py-2">Name</th>
+                            <th class="border px-4 py-2">Actions</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach($cats as $cat)
+                            <tr>
+                                <td class="border px-4 py-2">{{ $cat->id }}</td>
+                                <td class="border px-4 py-2">{{ $cat->name }}</td>
+                                <td class="border px-4 py-2 flex gap-2">
+                                    <!-- Update Category -->
+                                    <form action="{{ route('categories.update', $cat->id) }}" method="POST" class="flex gap-1">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="text" name="catname" value="{{ $cat->name }}" class="border px-2 py-1">
+                                        <button type="submit" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+                                            Update
+                                        </button>
+                                    </form>
+
+                                    <!-- Delete Category -->
+                                    <form action="{{ route('categories.destroy', $cat->id) }}" method="POST"
+                                          onsubmit="return confirm('Delete this category?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Areas -->
+            <div>
+                <h2 class="text-lg font-semibold mb-4">Areas</h2>
+
+                <!-- Add Area Form -->
+                <form action="{{ route('areas.store') }}" method="POST" class="mb-6 flex gap-2 items-end">
+                    @csrf
+                    <input type="text" name="name" placeholder="New Area" class="border px-4 py-2 w-1/2" required>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        Add Area
+                    </button>
+                </form>
+
+                <!-- Areas Table -->
+                <table class="table-auto w-full border">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border px-4 py-2">ID</th>
+                            <th class="border px-4 py-2">Name</th>
+                            <th class="border px-4 py-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($areas as $area)
+                            <tr>
+                                <td class="border px-4 py-2">{{ $area->id }}</td>
+                                <td class="border px-4 py-2">{{ $area->name }}</td>
+                                <td class="border px-4 py-2 flex gap-2">
+                                    <!-- Update Area -->
+                                    <form action="{{ route('areas.update', $area->id) }}" method="POST" class="flex gap-1">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="text" name="name" value="{{ $area->name }}" class="border px-2 py-1">
+                                        <button type="submit" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+                                            Update
+                                        </button>
+                                    </form>
+
+                                    <!-- Delete Area -->
+                                    <form action="{{ route('areas.destroy', $area->id) }}" method="POST"
+                                          onsubmit="return confirm('Delete this area?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- =======================
