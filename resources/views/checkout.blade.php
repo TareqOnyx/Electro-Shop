@@ -269,11 +269,13 @@
     <div class="section-title text-center">
         <h3 class="title">Your Order</h3>
     </div>
+
     <div class="order-summary">
         <div class="order-col">
             <div><strong>PRODUCT</strong></div>
             <div><strong>TOTAL</strong></div>
         </div>
+
         <div class="order-products">
             @foreach($cartItems as $item)
                 <div class="order-col">
@@ -296,18 +298,6 @@
 
     <form action="{{ route('orders.store') }}" method="POST">
         @csrf
-        <div class="input-checkbox">
-            <input type="checkbox" id="terms" required>
-            <label for="terms">
-                <span></span>
-                I've read and accept the <a href="#">terms & conditions</a>
-            </label>
-        </div>
-        <button type="submit" class="primary-btn order-submit">Place order</button>
-    </form>
-</div>
-
-
         <div class="input-checkbox">
             <input type="checkbox" id="terms" required>
             <label for="terms">

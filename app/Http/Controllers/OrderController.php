@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Cart;
 
 class OrderController extends Controller
 {
-    // عرض الطلبات الخاصة بالمستخدم
+    // Show user orders
     public function index()
     {
         $orders = Order::with('items.product')
@@ -20,59 +19,52 @@ class OrderController extends Controller
         return view('orders.index', compact('orders'));
     }
 
-    // إنشاء طلب جديد (من السلة)
+    // Create a new order (from cart)
     public function store(Request $request)
     {
         try {
-            // جلب السلة
+            // Get cart
             $cartItems = Cart::with('product')
                 ->where('user_id', auth()->id())
                 ->get();
 
             if ($cartItems->isEmpty()) {
-                return redirect()->back()->with('error', 'السلة فارغة');
+                return redirect()->back()->with('error', 'Your cart is empty');
             }
 
-            // تحقق من المخزون + احسب الإجمالي
+            // Calculate total
             $total = 0;
             foreach ($cartItems as $item) {
-                if ($item->quantity > $item->product->stock) {
-                    return redirect()->back()->with('error', "المنتج {$item->product->name} لا يحتوي على الكمية المطلوبة");
-                }
                 $total += $item->product->price * $item->quantity;
             }
 
-            // إنشاء الطلب
+            // Create order
             $order = Order::create([
                 'user_id' => auth()->id(),
                 'total'   => $total,
                 'status'  => 'pending',
             ]);
 
-            // تحديث المخزون + إنشاء عناصر الطلب
+            // Create order items (no stock update)
             foreach ($cartItems as $item) {
-                $product = $item->product;
-                $product->stock -= $item->quantity;
-                $product->save();
-
                 OrderItem::create([
                     'order_id'   => $order->id,
-                    'product_id' => $product->id,
+                    'product_id' => $item->product->id,
                     'quantity'   => $item->quantity,
-                    'price'      => $product->price,
+                    'price'      => $item->product->price,
                 ]);
             }
 
-            // مسح السلة
+            // Clear cart
             Cart::where('user_id', auth()->id())->delete();
 
-            return redirect()->route('orders.index')->with('success', 'تم إنشاء الطلب بنجاح');
+            return redirect()->route('orders.index')->with('success', 'Order placed successfully');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'فشل في إنشاء الطلب: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to place order: ' . $e->getMessage());
         }
     }
 
-    // تحديث حالة الطلب (للمستخدم نفسه)
+    // Update order status (user only)
     public function updateStatus(Request $request, $id)
     {
         try {
@@ -88,15 +80,15 @@ class OrderController extends Controller
                 'status' => $request->status,
             ]);
 
-            return redirect()->route('orders.index')->with('success', 'تم تحديث حالة الطلب');
+            return redirect()->route('orders.index')->with('success', 'Order status updated');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect()->back()->with('error', 'الطلب غير موجود');
+            return redirect()->back()->with('error', 'Order not found');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'فشل في تحديث حالة الطلب: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update order: ' . $e->getMessage());
         }
     }
 
-    // صفحة الدفع
+    // Checkout page
     public function checkout()
     {
         $cartItems = Cart::with('product')
