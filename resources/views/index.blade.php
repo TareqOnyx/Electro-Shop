@@ -244,8 +244,7 @@
                 </div>
             </div>
 
-
-            <!-- Products Grid -->
+<!-- Products Grid -->
 <div class="row">
     @foreach ($products as $product)
     <div class="col-12 col-sm-6 col-md-3">
@@ -253,7 +252,8 @@
             <div class="product-img">
                 <img src="{{ asset($product->image ?? 'img/product01.png') }}"
                      alt="{{ $product->name }}"
-                     style="width:250px; height:250px; object-fit:cover;">
+                     class="img-fluid"
+                     style="max-width:100%; height:300px; object-fit:cover;">
                 <div class="product-label">
                     @if(isset($product->sale) && $product->sale > 0)
                         <span class="sale">-{{ $product->sale }}%</span>
@@ -292,6 +292,7 @@
     @endforeach
 </div>
 <!-- /Products Grid -->
+
 
 
 
@@ -371,7 +372,11 @@
 						</div>
 					</div>
 					<!-- /section title -->
-                    <!-- Products Grid -->
+
+
+
+
+<!-- Products Grid -->
 <div class="row">
     @foreach ($products as $product)
     <div class="col-12 col-sm-6 col-md-3">
@@ -379,7 +384,8 @@
             <div class="product-img">
                 <img src="{{ asset($product->image ?? 'img/product01.png') }}"
                      alt="{{ $product->name }}"
-                     style="width:250px; height:250px; object-fit:cover;">
+                     class="img-fluid"
+                     style="max-width:100%; height:300px; object-fit:cover;">
                 <div class="product-label">
                     @if(isset($product->sale) && $product->sale > 0)
                         <span class="sale">-{{ $product->sale }}%</span>
