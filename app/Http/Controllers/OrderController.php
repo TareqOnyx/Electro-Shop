@@ -66,7 +66,7 @@ public function store(Request $request)
         // Clear cart
         Cart::where('user_id', auth()->id())->delete();
 
-        return redirect()->route('orders.index')->with('success', 'Order placed successfully');
+        return redirect()->route('checkout')->with('success', 'Order placed successfully');
     } catch (\Exception $e) {
         return redirect()->back()->with('error', 'Failed to place order: ' . $e->getMessage());
     }
