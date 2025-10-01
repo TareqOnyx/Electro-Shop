@@ -7,16 +7,56 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Middleware\IsAdmin;
 
-// Public homepage (عرض الكاتيجوري ديناميكياً)
+/*
+|--------------------------------------------------------------------------
+| Public Routes (Frontend)
+|--------------------------------------------------------------------------
+*/
+
+// الصفحة الرئيسية → عرض الكاتيجوري + المنتجات
 Route::get('/', [DashboardController::class, 'showCategories'])->name('home');
 
+// عرض كل المنتجات
+Route::get('/products', [DashboardController::class, 'showProducts'])->name('products.list');
+
+// عرض منتج واحد
+Route::get('/products/{id}', [DashboardController::class, 'showSingleProduct'])->name('products.show');
+
+// عرض منتجات حسب الكاتيجوري
+Route::get('/category/{id}', [DashboardController::class, 'showCategoryProducts'])->name('category.products');
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated User Routes
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->group(function () {
+
+    // Checkout & Orders
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
-    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store'); // for submitting the order
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Cart
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
+    Route::put('/cart/{id}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
+    Route::delete('/cart', [CartController::class, 'clear'])->name('cart.clear');
 });
 
-// Dashboard + admin routes (protected for admins)
+/*
+|--------------------------------------------------------------------------
+| Admin Routes (Dashboard & Management)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth', IsAdmin::class])->group(function () {
+
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Categories CRUD
@@ -39,19 +79,9 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
     Route::put('/orders/{order}/status', [OrderController::class, 'updateStatusAdmin'])->name('orders.updateStatus');
 });
 
-// Profile routes (any authenticated user)
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    //  Cart routes
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
-    Route::put('/cart/{id}', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
-    Route::delete('/cart', [CartController::class, 'clear'])->name('cart.clear');
-});
-
-// Include auth routes (login, register, etc.)
+/*
+|--------------------------------------------------------------------------
+| Auth Routes (Login, Register, etc.)
+|--------------------------------------------------------------------------
+*/
 require __DIR__.'/auth.php';

@@ -195,23 +195,23 @@
 				<div class="row">
 
 
-<!-- shop -->
-@foreach ($categories as $category)
-    <div class="col-md-4 col-xs-6">
-        <div class="shop">
-            <div class="shop-img">
-                <img src="./img/shop01.png" alt="{{ $category->name }}">
+        <!-- shop -->
+        @foreach ($categories as $category)
+            <div class="col-md-4 col-xs-6">
+                <div class="shop">
+                    <div class="shop-img">
+                        <img src="./img/shop01.png" alt="{{ $category->name }}">
+                    </div>
+                    <div class="shop-body">
+                        <h3>{{ $category->name }}<br>Collection</h3>
+                        <a href="{{ url('category/'.$category->id) }}" class="cta-btn">
+                            Shop now <i class="fa fa-arrow-circle-right"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="shop-body">
-                <h3>{{ $category->name }}<br>Collection</h3>
-                <a href="{{ url('category/'.$category->id) }}" class="cta-btn">
-                    Shop now <i class="fa fa-arrow-circle-right"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-@endforeach
-<!-- /shop -->
+        @endforeach
+        <!-- /shop -->
 
 
 				</div>
@@ -233,35 +233,51 @@
                     <h3 class="title">New Products</h3>
                 </div>
             </div>
-
-            <!-- Single Product -->
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="product">
-                    <div class="product-img">
-                        <img src="./img/product01.png" alt="Product Image">
-                        <div class="product-label">
-                            <span class="sale">-30%</span>
-                            <span class="new">NEW</span>
-                        </div>
-                    </div>
-                    <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">Product Name</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                        <div class="product-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                    </div>
-                    <div class="add-to-cart">
-                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                    </div>
+<!-- Products Grid -->
+<div class="row">
+    @foreach ($products as $product)
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="product">
+            <div class="product-img">
+                <img src="{{ asset($product->image ?? 'img/product01.png') }}" alt="{{ $product->name }}">
+                <div class="product-label">
+                    @if(isset($product->sale) && $product->sale > 0)
+                        <span class="sale">-{{ $product->sale }}%</span>
+                    @endif
+                    <span class="new">NEW</span>
                 </div>
             </div>
-            <!-- /Single Product -->
+            <div class="product-body">
+                <p class="product-category">{{ $product->category->name ?? 'Uncategorized' }}</p>
+                <h3 class="product-name">
+                    <a href="{{ route('products.show', $product->id) }}">{{ $product->name }}</a>
+                </h3>
+                <h4 class="product-price">
+                    ${{ number_format($product->price, 2) }}
+                    @if(isset($product->old_price))
+                        <del class="product-old-price">${{ number_format($product->old_price, 2) }}</del>
+                    @endif
+                </h4>
+                <div class="product-rating">
+                    @for ($i = 0; $i < 5; $i++)
+                        <i class="fa fa-star{{ $i < ($product->rating ?? 5) ? '' : '-o' }}"></i>
+                    @endfor
+                </div>
+            </div>
+            <div class="add-to-cart">
+                <form action="{{ route('cart.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <button type="submit" class="add-to-cart-btn">
+                        <i class="fa fa-shopping-cart"></i> add to cart
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endforeach
+</div>
+<!-- /Products Grid -->
 
         </div>
     </div>

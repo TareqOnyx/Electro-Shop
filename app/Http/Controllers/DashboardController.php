@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class DashboardController extends Controller
 {
-    // --- Dashboard view ---
+    // --- Dashboard view (للمشرف) ---
     public function index()
     {
         $cats = Category::all();
@@ -20,11 +20,22 @@ class DashboardController extends Controller
         return view('dashboard', compact('cats', 'products', 'areas'));
     }
 
-    // --- Frontend Home (عرض الكاتيجوري) ---
+    // --- Frontend Home (عرض الكاتيجوري + المنتجات) ---
     public function showCategories()
     {
         $categories = Category::all();
-        return view('index', compact('categories')); // استبدل index.blade.php بالواجهة
+        $products   = Product::with('category')->get();
+
+        return view('index', compact('categories', 'products'));
+    }
+
+    // --- عرض منتجات كاتيجوري محدد ---
+    public function showCategoryProducts($id)
+    {
+        $category = Category::findOrFail($id);
+        $products = Product::where('category_id', $id)->get();
+
+        return view('category', compact('category', 'products'));
     }
 
     // --- Categories CRUD ---
