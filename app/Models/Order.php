@@ -41,6 +41,12 @@ class Order extends Model
         return $this->belongsTo(Area::class);
     }
 
+    public function statusHistories()
+{
+    return $this->hasMany(OrderStatusHistory::class);
+}
+
+
     // Optional: Auto calculate total from items
     public function getTotalAttribute()
     {

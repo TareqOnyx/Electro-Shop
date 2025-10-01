@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Cart;
 use App\Models\Area;
+use App\Models\OrderStatusHistory;
 
 class OrderController extends Controller
 {
@@ -72,34 +73,40 @@ public function store(Request $request)
     }
 }
 
-    // Update order status (user only)
-    public function updateStatus(Request $request, $id)
-    {
-        try {
-            $order = Order::where('id', $id)
-                ->where('user_id', auth()->id())
-                ->firstOrFail();
 
-            $request->validate([
-                'status' => 'required|string|in:pending,confirmed,delivered,canceled',
-            ]);
+public function updateStatus(Request $request, $id)
+{
+    try {
+        $order = Order::findOrFail($id);
 
-            $order->update([
-                'status' => $request->status,
-            ]);
+        $request->validate([
+            'status' => 'required|string|in:pending,confirmed,delivered,canceled',
+        ]);
 
-            return redirect()->route('orders.index')->with('success', 'Order status updated');
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect()->back()->with('error', 'Order not found');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to update order: ' . $e->getMessage());
-        }
+        // Update order status
+        $order->update([
+            'status' => $request->status,
+        ]);
+
+        // Log history
+        OrderStatusHistory::create([
+            'order_id' => $order->id,
+            'status'   => $request->status,
+            'admin_id' => auth()->id(), // assumes only admins use this route
+        ]);
+
+        return redirect()->route('orders.index')->with('success', 'Order status updated');
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return redirect()->back()->with('error', 'Order not found');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Failed to update order: ' . $e->getMessage());
     }
+}
 
     // Show all orders (admin)
 public function adminIndex()
 {
-    $orders = Order::with('items.product', 'user', 'area')->get();
+    $orders = Order::with('items.product', 'user', 'area', 'statusHistories.admin')->get();
     return view('orders', compact('orders'));
 }
 
@@ -111,6 +118,12 @@ public function updateStatusAdmin(Request $request, Order $order)
     ]);
 
     $order->update(['status' => $request->status]);
+
+            OrderStatusHistory::create([
+            'order_id' => $order->id,
+            'status'   => $request->status,
+            'admin_id' => auth()->id(), // assumes only admins use this route
+        ]);
 
     return redirect()->route('orders.index')->with('success', 'Order status updated.');
 }
