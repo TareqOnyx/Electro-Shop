@@ -60,4 +60,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // App\Models\User.php
+
+// User.php
+public function carts()
+{
+    return $this->hasMany(Cart::class);
+}
+
+
 }
