@@ -9,7 +9,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'total', 'status', 'delivery_way_id'];
+    protected $fillable = ['user_id', 'total', 'status','area_id' ,'address'];
 
     public function user()
     {
@@ -34,6 +34,11 @@ class Order extends Model
     public function delivery()
     {
         return $this->belongsTo(Delivery::class);
+    }
+
+        public function area()
+    {
+        return $this->belongsTo(Area::class);
     }
 
     // Optional: Auto calculate total from items
