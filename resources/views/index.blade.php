@@ -243,7 +243,7 @@
             <div class="product-img">
                 <img src="{{ asset($product->image ?? 'img/product01.png') }}"
                      alt="{{ $product->name }}"
-                     style="width:250px; height:350px; object-fit:cover;">
+                     style="width:250px; height:250px; object-fit:cover;">
                 <div class="product-label">
                     @if(isset($product->sale) && $product->sale > 0)
                         <span class="sale">-{{ $product->sale }}%</span>
@@ -369,7 +369,7 @@
             <div class="product-img">
                 <img src="{{ asset($product->image ?? 'img/product01.png') }}"
                      alt="{{ $product->name }}"
-                     style="width:250px; height:350px; object-fit:cover;">
+                     style="width:250px; height:250px; object-fit:cover;">
                 <div class="product-label">
                     @if(isset($product->sale) && $product->sale > 0)
                         <span class="sale">-{{ $product->sale }}%</span>
