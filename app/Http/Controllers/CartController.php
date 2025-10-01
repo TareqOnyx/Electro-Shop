@@ -10,7 +10,7 @@ use Illuminate\Validation\ValidationException;
 class CartController extends Controller
 {
     //  جلب عناصر السلة
-    public function index()
+    public function index() 
     {
         $carts = Cart::with('product')
                 ->where('user_id', auth()->id())
