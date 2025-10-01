@@ -138,12 +138,10 @@
 <div class="section">
     <div class="container">
         <div class="row">
-            <!-- START FORM -->
-            <form action="{{ route('orders.store') }}" method="POST">
-                @csrf
-
-                <!-- Shipping Details -->
-                <div class="col-md-7">
+            <!-- SHIPPING & CHECKOUT FORM -->
+            <div class="col-md-7">
+                <form action="{{ route('orders.store') }}" method="POST">
+                    @csrf
                     <div class="shiping-details">
                         <div class="section-title">
                             <h3 class="title">Shipping Address</h3>
@@ -155,7 +153,9 @@
                             <select name="area_id" id="area_id" class="input" required>
                                 <option value="">Select an area</option>
                                 @foreach($areas as $area)
-                                    <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                    <option value="{{ $area->id }}" data-shipping="{{ $area->shipping }}">
+                                        {{ $area->name }} (${{ number_format($area->shipping, 2) }})
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -165,55 +165,73 @@
                             <label for="address">Address</label>
                             <input type="text" name="address" id="address" class="input" placeholder="Enter your address" required>
                         </div>
+
+                        <button type="submit" class="primary-btn order-submit mt-3">Place order</button>
                     </div>
+                </form>
+            </div>
+
+            <!-- ORDER DETAILS -->
+            <div class="col-md-5 order-details">
+                <div class="section-title text-center">
+                    <h3 class="title">Your Order</h3>
                 </div>
 
-                <!-- Order Details -->
-                <div class="col-md-5 order-details">
-                    <div class="section-title text-center">
-                        <h3 class="title">Your Order</h3>
+                <div class="order-summary">
+                    <div class="order-col">
+                        <div><strong>PRODUCT</strong></div>
+                        <div><strong>TOTAL</strong></div>
                     </div>
 
-                    <div class="order-summary">
-                        <div class="order-col">
-                            <div><strong>PRODUCT</strong></div>
-                            <div><strong>TOTAL</strong></div>
-                        </div>
+                    <div class="order-products">
+    @foreach($cartItems as $item)
+        <div class="order-col flex items-center justify-between mb-2">
+            <div class="flex items-center space-x-2">
+                <!-- Quantity Input (bigger) -->
+                <form action="{{ route('cart.update', $item->id) }}" method="POST" style="display:inline-block;">
+                    @csrf
+                    @method('PUT')
+                    <input type="number" name="quantity" value="{{ $item->quantity }}" min="1"
+                           class="input text-center" 
+                           style="width: 60px; padding: 2px;"
+                           onchange="this.form.submit()">
+                </form>
 
-                        <div class="order-products">
-                            @foreach($cartItems as $item)
-                                <div class="order-col">
-                                    <div>{{ $item->quantity }}x {{ $item->product->name }}</div>
-                                    <div>${{ number_format($item->product->price * $item->quantity, 2) }}</div>
-                                </div>
-                            @endforeach
-                        </div>
+                <span>{{ $item->product->name }}</span>
+            </div>
 
-                        <div class="order-col">
-                            <div>Shipping</div>
-                            <div><strong>FREE</strong></div>
-                        </div>
+            <div class="flex items-center space-x-2">
+                <span>${{ number_format($item->product->price * $item->quantity, 2) }}</span>
 
-                        <div class="order-col">
-                            <div><strong>TOTAL</strong></div>
-                            <div><strong class="order-total">${{ number_format($total, 2) }}</strong></div>
-                        </div>
+                <!-- Delete Button -->
+                <form action="{{ route('cart.destroy', $item->id) }}" method="POST" style="display:inline-block;" 
+                      onsubmit="return confirm('Are you sure you want to remove this item?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                </form>
+            </div>
+        </div>
+    @endforeach
+</div>
+
+
+
+                    <div class="order-col">
+                        <div>Shipping</div>
+                        <div><strong id="shipping-price">${{ number_format($areas[0]->shipping ?? 0, 2) }}</strong></div>
                     </div>
 
-                    <div class="input-checkbox mt-2">
-                        <input type="checkbox" id="terms" required>
-                        <label for="terms"><span></span>I've read and accept the <a href="#">terms & conditions</a></label>
+                    <div class="order-col">
+                        <div><strong>TOTAL</strong></div>
+                        <div><strong class="order-total" id="total-price">${{ number_format($total + ($areas[0]->shipping ?? 0), 2) }}</strong></div>
                     </div>
-
-                    <button type="submit" class="primary-btn order-submit mt-3">Place order</button>
                 </div>
-            </form>
-            <!-- END FORM -->
+            </div>
         </div>
     </div>
 </div>
 <!-- /SECTION -->
-
 		<!-- NEWSLETTER -->
 		<div id="newsletter" class="section">
 			<!-- container -->
@@ -353,6 +371,19 @@
 		<script src="js/nouislider.min.js"></script>
 		<script src="js/jquery.zoom.min.js"></script>
 		<script src="js/main.js"></script>
+        <script>
+            const areaSelect = document.getElementById('area_id');
+            const shippingPriceElem = document.getElementById('shipping-price');
+            const totalPriceElem = document.getElementById('total-price');
+            let cartTotal = {{ $total }};
+
+            areaSelect.addEventListener('change', function() {
+                const shipping = parseFloat(this.selectedOptions[0].dataset.shipping) || 0;
+                shippingPriceElem.textContent = `$${shipping.toFixed(2)}`;
+                totalPriceElem.textContent = `$${(cartTotal + shipping).toFixed(2)}`;
+            });
+        </script>
+
 
 	</body>
 </html>
