@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class DashboardController extends Controller
 {
+    // --- Dashboard view ---
     public function index()
     {
         $cats = Category::all();
@@ -19,7 +20,14 @@ class DashboardController extends Controller
         return view('dashboard', compact('cats', 'products', 'areas'));
     }
 
-    // --- Categories ---
+    // --- Frontend Home (عرض الكاتيجوري) ---
+    public function showCategories()
+    {
+        $categories = Category::all();
+        return view('index', compact('categories')); // استبدل index.blade.php بالواجهة
+    }
+
+    // --- Categories CRUD ---
     public function addCategory(Request $request)
     {
         $request->validate([
@@ -50,7 +58,7 @@ class DashboardController extends Controller
         return Redirect()->back()->with('success', 'Category deleted.');
     }
 
-    // --- Products ---
+    // --- Products CRUD ---
     public function addProduct(Request $request)
     {
         $request->validate([
@@ -89,7 +97,7 @@ class DashboardController extends Controller
         $data = $request->only(['name', 'desc', 'price', 'category_id']);
 
         if ($request->hasFile('imgpro')) {
-            // Delete old image
+            // حذف الصورة القديمة إذا موجودة
             if ($product->image && file_exists(public_path($product->image))) {
                 unlink(public_path($product->image));
             }
@@ -117,37 +125,36 @@ class DashboardController extends Controller
         return Redirect()->back()->with('success', 'Product deleted.');
     }
 
-    // --- Areas ---
-public function addArea(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-    ]);
+    // --- Areas CRUD ---
+    public function addArea(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
-    Area::create(['name' => $request->name]);
+        Area::create(['name' => $request->name]);
 
-    return Redirect()->back()->with('success', 'Area added.');
-}
+        return Redirect()->back()->with('success', 'Area added.');
+    }
 
-public function updateArea(Request $request, $id)
-{
-    $request->validate([
-        'name' => 'required|string|max:50',
-    ]);
+    public function updateArea(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:50',
+        ]);
 
-    $area = Area::findOrFail($id);
-    $area->name = $request->name;
-    $area->save();
+        $area = Area::findOrFail($id);
+        $area->name = $request->name;
+        $area->save();
 
-    return Redirect()->back()->with('success', 'Area updated.');
-}
+        return Redirect()->back()->with('success', 'Area updated.');
+    }
 
-public function deleteArea($id)
-{
-    $area = Area::findOrFail($id);
-    $area->delete();
+    public function deleteArea($id)
+    {
+        $area = Area::findOrFail($id);
+        $area->delete();
 
-    return Redirect()->back()->with('success', 'Area deleted.');
-}
-
+        return Redirect()->back()->with('success', 'Area deleted.');
+    }
 }

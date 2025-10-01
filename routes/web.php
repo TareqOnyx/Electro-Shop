@@ -7,10 +7,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Middleware\IsAdmin;
 
-// Public homepage
-Route::get('/', function () {
-    return view('index');
-});
+// Public homepage (عرض الكاتيجوري ديناميكياً)
+Route::get('/', [DashboardController::class, 'showCategories'])->name('home');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
@@ -36,14 +34,10 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
     Route::put('/areas/{id}', [DashboardController::class, 'updateArea'])->name('areas.update');
     Route::delete('/areas/{id}', [DashboardController::class, 'deleteArea'])->name('areas.destroy');
 
+    // Orders management
     Route::get('/orders', [OrderController::class, 'adminIndex'])->name('orders.index');
     Route::put('/orders/{order}/status', [OrderController::class, 'updateStatusAdmin'])->name('orders.updateStatus');
-
 });
-
-
-
-
 
 // Profile routes (any authenticated user)
 Route::middleware('auth')->group(function () {
