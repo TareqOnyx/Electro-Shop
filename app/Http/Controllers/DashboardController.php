@@ -34,8 +34,8 @@ class DashboardController extends Controller
     {
         $category = Category::findOrFail($id);
         $products = Product::where('category_id', $id)->get();
-
-        return view('category', compact('category', 'products'));
+        $categories = Category::all();
+        return view('store', compact('category', 'products', 'categories'));
     }
 
     // --- Categories CRUD ---
