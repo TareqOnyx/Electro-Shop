@@ -51,4 +51,6 @@
 </div>
 
     </form>
+
+    @include('auth.partials.google-sign-in')
 </x-guest-layout>
